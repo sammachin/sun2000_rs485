@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Sun 2000 Monitor</title>
+  <script
+			  src="https://code.jquery.com/jquery-3.4.0.min.js"
+			  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+			  crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+  </style>
+  </head>
+  <body>
+    <table id="table">
+    <tr>
+        <th>Time (UTC)</th>
+        <th>Status</th>
+        <th>Temp (C)</th>
+        <th>Freq </th>
+        <th>Efficency</th>
+        <th>Current Power (W)</th>
+        <th>Daily Power (kWh)</th>
+        <th>Total Power (kWh)</th>
+    </tr>
+    </table>
+       
+  <script>
+    function fetch() {
+      var txt;
+        $.getJSON( "/data", function(data){ 
+         if(data){
+           txt += "<tr><td>"+data.time+"</td><td>"+data.status+"</td><td>"+data.temperature+"</td><td>"+data.frequency+"</td><td>"+data.inverter_efficency+"</td><td>"+data.current_power+"</td><td>"+data.day_power+"</td><td>"+data.total_power+"</td></tr>";
+         }
+         if(txt != ""){
+           $("#table").append(txt)
+         }    
+        });
+    }
+    $(document).ready(function(){
+      fetch();
+      setInterval(fetch, 60000);
+    });
+  </script>
+  
+
+</body></html>
