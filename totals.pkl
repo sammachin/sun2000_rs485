@@ -1,0 +1,9 @@
+(lp0
+(lp1
+S'Date'
+p2
+aS'Daily'
+p3
+aS'Total'
+p4
+aa.

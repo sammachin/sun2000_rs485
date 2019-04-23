@@ -1,16 +1,16 @@
 #! /usr/bin/env python
 # -*- coding: utf-8
-
-
-import minimalmodbus
-from datetime import datetime
+#import minimalmodbus
+import datetime
 from flask import Flask, jsonify
+import string
+import pickle
+import json
 
 app = Flask(__name__, static_url_path='')
 port = 8000
 
-instrument = minimalmodbus.Instrument('/dev/ttyUSB0', 1) # port name, slave address (in decimal)
-instrument.serial.baudrate = 9600
+
 
 
 status_map = { 
@@ -28,21 +28,11 @@ status_map = {
     }
 
 
-def get_data():
-  resp = {}
-  resp['time'] = datetime.fromtimestamp(instrument.read_long(40000)).strftime("%Y-%m-%d %H:%M:%S")
-  resp['status'] = status_map[str(instrument.read_register(40939, 0))]
-  resp['temperature'] = instrument.read_register(40533, 1) 
-  resp['inverter_efficency'] = instrument.read_register(40685, 2) 
-  resp['frequency'] = instrument.read_register(40546, 2)
-  resp['current_power'] = instrument.read_long(40525)
-  resp['day_power'] = instrument.read_long(40562)
-  resp['total_power'] = instrument.read_long(40560)
-  return resp
-  
   
 @app.route('/data', methods=['GET'])
 def data():
+    instrument = minimalmodbus.Instrument('/dev/ttyUSB0', 1) # port name, slave address (in decimal)
+    instrument.serial.baudrate = 9600
     resp = {}
     resp['time'] = datetime.fromtimestamp(instrument.read_long(40000)).strftime("%Y-%m-%d %H:%M:%S")
     resp['status'] = status_map[str(instrument.read_register(40939, 0))]
@@ -57,7 +47,15 @@ def data():
 
 @app.route('/', methods=['GET'])
 def root():
-    return app.send_static_file('index.html')
+  d = datetime.date.today()
+  file = d.strftime('%Y%m%d.pkl')
+  arr = pickle.load(open(file, "rb"))
+  data={ 'data':json.dumps(arr)}
+  filein = open('static/graph.html')
+  src = string.Template(filein.read())
+  page = src.substitute(data)
+  return page
+  
     
         
 if __name__ == "__main__":

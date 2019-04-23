@@ -1,0 +1,3 @@
+#min					hr	md mo wkday 	command
+0,5,10,15,20,25,30,35,40,45,50,55	6-22	*  *  *		/home/pi/read.py update 
+1					0	*  *  *		/home/pi/read.py newday 
